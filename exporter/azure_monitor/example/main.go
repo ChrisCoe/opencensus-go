@@ -1,20 +1,19 @@
 package main
 
 import (
-	"context" // similar to log
+	"context"
 	"log"
 	"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/trace"
 )
 
-
 func main() {
 
 	ctx := context.Background()
 
 	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "d07ba4f7-7546-47b4-b3e0-7fa203f17f6a", //  "111111111111111111", // add your InstrumentationKey
+		InstrumentationKey: "111111111111111111", // add your InstrumentationKey
 		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
 		TimeOut: 			10.0,
 	})
@@ -25,10 +24,6 @@ func main() {
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)
 
-	ctx, span := trace.StartSpan(ctx, "/foo") // This calls the function ExportSpan written in azure_monitor.go 
+	_, span := trace.StartSpan(ctx, "/foo") // This calls the function ExportSpan written in azure_monitor.go 
 	span.End()
-
 }
-
-
-

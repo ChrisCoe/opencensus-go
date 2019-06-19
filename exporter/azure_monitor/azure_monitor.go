@@ -7,7 +7,6 @@ import (
 	"go.opencensus.io/trace"
 )
 
-
 type AzureTraceExporter struct {
 	projectID          string
 	InstrumentationKey string
@@ -28,13 +27,12 @@ func NewAzureTraceExporter(o common.Options) (*AzureTraceExporter, error) {
 
 var _ trace.Exporter = (*AzureTraceExporter)(nil)
 
-//Export SpanData to Azure Monitor
+// Export SpanData to Azure Monitor
 // The () before the function name means it is a function of AzureTraceExporter
 func (e *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	baseObj := common.BaseObject {IKey : e.options.InstrumentationKey}
 	envelope := common.Envelope {
 		BaseObject: baseObj,
-		//StartTime:  		sd.StartTime,
 	}
 	envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
 

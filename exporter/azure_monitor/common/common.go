@@ -4,6 +4,7 @@ import (
 	"context" 
 )
 
+// Some of these structs will be used in future PRs
 
 type AzureMonitorContext struct {
     sdkVersion ai_internal_sdkVersion
@@ -15,7 +16,7 @@ type ai_internal_sdkVersion struct {
     ext_version string
 }
 
-type BaseObject struct {
+type BaseObject struct { // Used to avoid repeat attributes
 	ver int
 	Name string
 	time string
@@ -39,7 +40,7 @@ type Data struct {
 	baseType string
 }
 
-type Envelope struct {
+type Envelope struct { // Will add more for next PR
 	BaseObject
 }
 

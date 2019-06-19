@@ -40,7 +40,7 @@ type Data struct {
 	baseType string
 }
 
-type Envelope struct { // Will add more for next PR
+type Envelope struct { // TODO: Add more for next PR
 	BaseObject
 }
 

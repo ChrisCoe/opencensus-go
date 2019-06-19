@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	ctx := context.Background()
 
 	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{

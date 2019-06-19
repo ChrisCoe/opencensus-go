@@ -4,7 +4,7 @@ import (
 	"context" 
 )
 
-// Some of these structs will be used in future PRs
+// Some structs will be used in future PRs
 
 type AzureMonitorContext struct {
     sdkVersion ai_internal_sdkVersion

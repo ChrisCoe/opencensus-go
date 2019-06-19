@@ -37,7 +37,7 @@ func (e *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
 
 	transporter := common.Transporter{ 
-		Envel: envelope,
+		Envel: envelope, // Transporter will have more later
 	}
 	transporter.Transmit(&e.options, &envelope)
 

@@ -1,30 +1,29 @@
 package common
+// Package: Structs commonly used for both trace and log exporters
 
 import (
 	"context" 
 )
 
-// Some of these structs will be used in future PRs
-
 type AzureMonitorContext struct {
-    sdkVersion ai_internal_sdkVersion
+    SdkVersion ai_internal_sdkVersion
 }
 
 type ai_internal_sdkVersion struct {
-    goPlatform_version string
-    opencensus_version string
-    ext_version string
+    GoPlatform_version string
+    Opencensus_version string
+    Ext_version string
 }
 
 type BaseObject struct { // Used to avoid repeat attributes
-	ver int
+	Version int
 	Name string
-	time string
-	sampleRate int
-	success bool
+	Time string
+	SampleRate int
+	Success bool
 	IKey string
-	tags string
-	data string
+	Tags string
+	Data string
 }
 
 type Options struct {
@@ -36,30 +35,30 @@ type Options struct {
 }
 
 type Data struct {
-	baseDate string
-	baseType string
+	BaseDate string
+	BaseType string
 }
 
-type Envelope struct { // Will add more for next PR
+type Envelope struct { //TODO: Add more attributes
 	BaseObject
 }
 
 type RemoteDependency struct {
 	BaseObject
-	id string
-	duration string
-	responseCode string
-	url string
-	properties string
-	measurements string
+	Id string
+	Duration string
+	ResponseCode string
+	Url string
+	Properties string
+	Measurements string
 }
 
 type Request struct {
 	BaseObject
-	id string
-	duration string
-	responseCode string
-	url string
-	properties string
-	measurements string
+	Id string
+	Duration string
+	ResponseCode string
+	Url string
+	Properties string
+	Measurements string
 }

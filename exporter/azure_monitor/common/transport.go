@@ -1,4 +1,5 @@
 package common
+// Package: Structs commonly used for both trace and log exporters
 
 import (
 	"bytes"
@@ -10,19 +11,24 @@ import (
 
 // We can then use this for logs and trace exporter.
 type Transporter struct {
-	Envel Envelope
+	EnvelopeData Envelope
 	
 }
 
-func (e *Transporter) Transmit(o *Options, env *Envelope) {
+/*	Transmits envelope data to Azure Monitor.
+	@param options holds specific attributes for exporter
+	@param envelope Contains the data package to be transmitted
+	@return The exporter created, and error if there is any
+*/
+func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	fmt.Println("Begin Transmission") // For debugging
-	bytesRepresentation, err := json.Marshal(env)
+	bytesRepresentation, err := json.Marshal(envelope)
 	if err != nil {
 		fmt.Println("Error: json conversion for envelope\n")
 	}
 	
 	reponse, err := http.Post(
-		o.EndPoint, 							//url
+		options.EndPoint, 						//url
 		"application/json",		 				//header
 		bytes.NewBuffer(bytesRepresentation),	//data
 	)

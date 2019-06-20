@@ -1,4 +1,5 @@
 package main
+// Package: Runs code for using Azure exporter
 
 import (
 	"context"

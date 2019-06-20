@@ -18,7 +18,7 @@ func NewAzureTraceExporter(o common.Options) (*AzureTraceExporter, error) {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
 	e := &AzureTraceExporter {
-		projectID:          "abcdefghijk",
+		//projectID:          "abcdefghijk",
 		InstrumentationKey: o.InstrumentationKey,
 		options:            o,
 	}
@@ -30,10 +30,15 @@ var _ trace.Exporter = (*AzureTraceExporter)(nil)
 // Export SpanData to Azure Monitor
 // The () before the function name means it is a function of AzureTraceExporter
 func (e *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
-	baseObj := common.BaseObject {IKey : e.options.InstrumentationKey}
+	baseObj := common.BaseObject {
+		IKey : e.options.InstrumentationKey,
+		Tags : common.Azure_monitor_contect,
+	}
 	envelope := common.Envelope {
 		BaseObject: baseObj,
 	}
+	if sd.ParentSpanID 
+	envelope.BaseObject.Tags[ai.]
 	envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
 
 	transporter := common.Transporter{ 

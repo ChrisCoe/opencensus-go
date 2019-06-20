@@ -16,25 +16,51 @@ type Transporter struct {
 
 func (e *Transporter) Transmit(o *Options, env *Envelope) {
 	fmt.Println("Begin Transmission") // For debugging
-	bytesRepresentation, err := json.Marshal(env)
-	if err != nil {
-		fmt.Println("Error: json conversion for envelope\n")
-	}
+
+	// env2 := map[string]interface{}{
+	// 	"InstrumentationKey": env.BaseObject.IKey,
+	// }
+
+	fmt.Println(env.BaseObject)
+	//fmt.Println(env2)
+	bytesRepresentation, err := json.Marshal(env.BaseObject)
+	// if err != nil {
+	// 	fmt.Println("Error: json conversion for envelope\n")
+	// }
+	//fmt.Println(bytesRepresentation)
+
+	// header := map[string]interface{}{
+	// 	"Accept": "application/json",
+	// }
+	//var jsonStr = []byte(`{"instrumentation key":"d07ba4f7-7546-47b4-b3e0-7fa203f17f6a"}`)
 	
-	reponse, err := http.Post(
-		o.EndPoint, 							//url
-		"application/json",		 				//header
+	url := o.EndPoint
+	response, err := http.Post(
+		url, 							//url
+		"application/json; charset=utf-8",		 				//header
 		bytes.NewBuffer(bytesRepresentation),	//data
 	)
-	if err != nil {
-		fmt.Println("Error: post error %d\n", err)
-	}
 
-	defer reponse.Body.Close() // prevent possible resource leak
+
+
+	// reponse, err := http.Get(
+	// 	url			,				//url
+	// )
+	// if err != nil {
+	// 	fmt.Println("Error: post error %d\n", err)
+	// }
+
+
+
+
+	defer response.Body.Close() // prevent possible resource leak
 
 	var result map[string]interface{}
-	err = json.NewDecoder(reponse.Body).Decode(&result)
+	
+	fmt.Println(response)
+	err = json.NewDecoder(response.Body).Decode(&result)
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("Error: check decoder\n")
 	}
 

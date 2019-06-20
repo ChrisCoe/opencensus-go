@@ -2,9 +2,16 @@ package common
 
 import (
 	"context" 
+	"runtime"
+	//"strings"
 )
 
 // Some of these structs will be used in future PRs
+
+var Azure_monitor_contect = map[string]interface{} {
+	"ai.cloud.role": "Golang Application",
+	"ai.internal.sdkVersion":  runtime.Version() + ":oc" + Opencensus_version + ":ext" + Ext_version,
+}
 
 type AzureMonitorContext struct {
     sdkVersion ai_internal_sdkVersion
@@ -17,14 +24,14 @@ type ai_internal_sdkVersion struct {
 }
 
 type BaseObject struct { // Used to avoid repeat attributes
-	ver int
+	//ver int
 	Name string
-	time string
-	sampleRate int
-	success bool
 	IKey string
-	tags string
-	data string
+	//time string
+	//sampleRate int
+	//success bool 
+	Tags map[string]interface{}
+	//data string
 }
 
 type Options struct {

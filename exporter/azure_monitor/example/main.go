@@ -12,7 +12,7 @@ func main() {
 	ctx := context.Background()
 
 	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "111111111111111111", // add your InstrumentationKey
+		InstrumentationKey: "d07ba4f7-7546-47b4-b3e0-7fa203f17f6a", // add your InstrumentationKey
 		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
 		TimeOut: 			10.0,
 	})
@@ -26,3 +26,5 @@ func main() {
 	_, span := trace.StartSpan(ctx, "/foo") // This calls the function ExportSpan written in azure_monitor.go 
 	span.End()
 }
+
+// maybe we need ssl?

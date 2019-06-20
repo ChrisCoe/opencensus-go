@@ -26,7 +26,7 @@ func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	if err != nil {
 		fmt.Println("Error: json conversion for envelope\n")
 	}
-	
+  
 	reponse, err := http.Post(
 		options.EndPoint, 						//url
 		"application/json",		 				//header
@@ -43,7 +43,7 @@ func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	if err != nil {
 		fmt.Println("Error: check decoder\n")
 	}
-
+  
 	log.Println(result)
 	log.Println(result["data"])
 	fmt.Println("End Transmission") // For debugging

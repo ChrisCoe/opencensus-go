@@ -1,70 +1,46 @@
 package common
 
-import (
-	"bytes"
-	"log"
-	"net/http"
-	"encoding/json"
-	"fmt"
-)
+// import (
+// 	"bytes"
+// 	//"log"
+// 	"net/http"
+// 	"encoding/json"
+// 	"fmt"
+// 	//"io/ioutil"
+// )
 
-// We can then use this for logs and trace exporter.
-type Transporter struct {
-	Envel Envelope
-	
-}
+// // We can then use this for logs and trace exporter.
+// type Transporter struct {
+// 	Envel Envelope
+// }
 
-func (e *Transporter) Transmit(o *Options, env *Envelope) {
-	fmt.Println("Begin Transmission") // For debugging
+// func (e *Transporter) Transmit(o *common.Options, env Envelope) {
+// 	fmt.Println("Begin Transmission") // For debugging
+// 	//fmt.Println(env)
+// 	fmt.Println(env.IKey)
+// 	bytesRepresentation, err := json.Marshal(env)
+// 	if err != nil {
+// 		fmt.Println(err)
+//         fmt.Println("What happened?")
+// 	}
+// 	fmt.Println("Byte Representation")
+// 	fmt.Println(string(bytesRepresentation))
 
-	// env2 := map[string]interface{}{
-	// 	"InstrumentationKey": env.BaseObject.IKey,
-	// }
+// 	req, err := http.NewRequest("POST", o.EndPoint, bytes.NewBuffer(bytesRepresentation))
+// 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+// 	req.Header.Set("Accept", "application/json")
 
-	fmt.Println(env.BaseObject)
-	//fmt.Println(env2)
-	bytesRepresentation, err := json.Marshal(env.BaseObject)
-	// if err != nil {
-	// 	fmt.Println("Error: json conversion for envelope\n")
-	// }
-	//fmt.Println(bytesRepresentation)
+// 	req = req
+// 	fmt.Println("REQUEST")
+// 	fmt.Println(req)
 
-	// header := map[string]interface{}{
-	// 	"Accept": "application/json",
-	// }
-	//var jsonStr = []byte(`{"instrumentation key":"d07ba4f7-7546-47b4-b3e0-7fa203f17f6a"}`)
-	
-	url := o.EndPoint
-	response, err := http.Post(
-		url, 							//url
-		"application/json; charset=utf-8",		 				//header
-		bytes.NewBuffer(bytesRepresentation),	//data
-	)
-
-
-
-	// reponse, err := http.Get(
-	// 	url			,				//url
-	// )
-	// if err != nil {
-	// 	fmt.Println("Error: post error %d\n", err)
-	// }
-
-
-
-
-	defer response.Body.Close() // prevent possible resource leak
-
-	var result map[string]interface{}
-	
-	fmt.Println(response)
-	err = json.NewDecoder(response.Body).Decode(&result)
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("Error: check decoder\n")
-	}
-
-	log.Println(result)
-	log.Println(result["data"])
-	fmt.Println("End Transmission") // For debugging
-}
+// 	client := &http.Client{}
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		fmt.Println(err)
+//         fmt.Println("What happened?")
+// 	}
+// 	resp = resp
+// 	fmt.Println("RESPONSE")
+// 	fmt.Println(resp)
+// }

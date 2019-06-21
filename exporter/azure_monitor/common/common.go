@@ -3,14 +3,27 @@ package common
 import (
 	"context" 
 	"runtime"
+	"os"
+	"fmt"
 	//"strings"
 )
 
 // Some of these structs will be used in future PRs
 
 var Azure_monitor_contect = map[string]interface{} {
-	"ai.cloud.role": "Golang Application",
+	"ai.cloud.role": "Go Application",
+	"ai.cloud.roleInstance": getHostName(),
+	"ai.device.id": getHostName(),
+	"ai.device.type": "Other",
 	"ai.internal.sdkVersion":  runtime.Version() + ":oc" + Opencensus_version + ":ext" + Ext_version,
+}
+
+func getHostName() (string) {
+	hostName, err := os.Hostname()
+	if err != nil {
+		fmt.Println("Problem with getting host name")
+	}
+	return hostName
 }
 
 type AzureMonitorContext struct {
@@ -26,11 +39,13 @@ type ai_internal_sdkVersion struct {
 type BaseObject struct { // Used to avoid repeat attributes
 	//ver int
 	Name string
-	IKey string
+	LilKey string
+	iKey string
 	//time string
 	//sampleRate int
 	//success bool 
 	Tags map[string]interface{}
+	Dog string
 	//data string
 }
 
@@ -47,9 +62,9 @@ type Data struct {
 	baseType string
 }
 
-type Envelope struct { // TODO: Add more for next PR
-	BaseObject
-}
+// type Envelope struct { // TODO: Add more for next PR
+// 	BaseObject
+// }
 
 type RemoteDependency struct {
 	BaseObject

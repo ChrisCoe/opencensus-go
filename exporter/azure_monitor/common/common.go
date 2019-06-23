@@ -11,7 +11,7 @@ import (
 // Some of these structs will be used in future PRs
 
 var Azure_monitor_contect = map[string]interface{} {
-	"ai.cloud.role": "Go Application",
+	"ai.cloud.role": "main.go",
 	"ai.cloud.roleInstance": getHostName(),
 	"ai.device.id": getHostName(),
 	"ai.device.type": "Other",
@@ -62,10 +62,12 @@ type Data struct {
 	baseType string
 }
 
-// type Envelope struct { // TODO: Add more for next PR
-// 	BaseObject
-// }
-
+type Envelope struct { // TODO: Add more for next PR
+	IKey string `json:"iKey"`
+	Tags map[string]interface{} `json:"tags"`
+	Name string `json:"name"`
+	Time string `json:"time"`
+} 
 type RemoteDependency struct {
 	BaseObject
 	id string

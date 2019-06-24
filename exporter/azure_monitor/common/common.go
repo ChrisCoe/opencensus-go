@@ -38,14 +38,12 @@ type ai_internal_sdkVersion struct {
 
 type BaseObject struct { // Used to avoid repeat attributes
 	//ver int
-	Name string
-	LilKey string
+	Name string `json:"name"`
 	iKey string
 	//time string
 	//sampleRate int
 	//success bool 
 	Tags map[string]interface{}
-	Dog string
 	//data string
 }
 
@@ -58,8 +56,8 @@ type Options struct {
 }
 
 type Data struct {
-	baseDate string
-	baseType string
+	BaseData RemoteDependency `json:"baseData"`
+	BaseType string `json:"baseType"`
 }
 
 type Envelope struct { // TODO: Add more for next PR
@@ -67,15 +65,19 @@ type Envelope struct { // TODO: Add more for next PR
 	Tags map[string]interface{} `json:"tags"`
 	Name string `json:"name"`
 	Time string `json:"time"`
+	DataToSend Data `json:"data"`
 } 
 type RemoteDependency struct {
-	BaseObject
-	id string
-	duration string
-	responseCode string
-	url string
-	properties string
-	measurements string
+	Name string 		`json:"name"`
+	Id string 			`json:"id"`
+	ResultCode string 	`json:"resultCode"`
+	Duration string 	`json:"duration"`
+	Success bool 		`json:"success"`
+	Type string			`json:"type"`
+	// responseCode string
+	// url string
+	// properties string
+	// measurements string
 }
 
 type Request struct {

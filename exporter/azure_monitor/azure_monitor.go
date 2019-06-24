@@ -13,21 +13,21 @@ import (
 type AzureTraceExporter struct {
 	ProjectID          string
 	InstrumentationKey string
-	options            common.Options
+	Options            common.Options
 }
 
 /*	Creates an Azure Trace Exporter.
 	@param options holds specific attributes for the new exporter
 	@return The exporter created and error if there is any
 */
-func NewAzureTraceExporter(options common.Options) (*AzureTraceExporter, error) {
-	if options.InstrumentationKey == "" {
+func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) {
+	if Options.InstrumentationKey == "" {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
 	exporter := &AzureTraceExporter {
 		ProjectID:          "abcdefghijk",
-		InstrumentationKey: options.InstrumentationKey,
-		options:            options,
+		InstrumentationKey: Options.InstrumentationKey,
+		Options:            Options,
 	}
 	return exporter, nil
 }
@@ -39,7 +39,7 @@ var _ trace.Exporter = (*AzureTraceExporter)(nil)
 */
 func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope := common.Envelope {
-		IKey : e.options.InstrumentationKey,
+		IKey : exporter.Options.InstrumentationKey,
 		Tags : common.Azure_monitor_contect,
 		Name : "Microsoft.ApplicationInsights.RemoteDependency",
 		Time : getCurrentTime(),
@@ -79,13 +79,13 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	transporter := common.Transporter{ 
 		EnvelopeData: envelope,
 	}
-	transporter.Transmit(&exporter.options, &envelope)
+	transporter.Transmit(&exporter.Options, &envelope)
 
 	fmt.Printf("Name: %s\nTraceID: %x\nSpanID: %x\nParentSpanID: %x\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
 		sd.Name, sd.TraceID, sd.SpanID, sd.ParentSpanID, sd.StartTime, sd.EndTime, sd.Annotations)
 }
 
-/* Generates the current time stamp and properly formats
+/* Generates the current time stamp and properly formats to a string.
 	@return time stamp
 */
 func getCurrentTime() string {
@@ -116,7 +116,7 @@ func timeStampToDuration(t time.Duration) (string) {
 	return formattedDays + "." + formattedHours + ":" + formattedMinutes + ":" + formattedSeconds + "."+ formattedMiliseconds
 }
 
-/* Performs division and returns both quotient and remainder */
+/* Performs division and returns both quotient and remainder. */
 func divmod(numerator, denominator int64) (quotient, remainder int64) {
     quotient = numerator / denominator // integer division, decimals are truncated
     remainder = numerator % denominator

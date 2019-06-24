@@ -5,7 +5,6 @@ import (
 	"runtime"
 	"os"
 	"fmt"
-	//"strings"
 )
 
 // Some of these structs will be used in future PRs
@@ -26,27 +25,6 @@ func getHostName() (string) {
 	return hostName
 }
 
-type AzureMonitorContext struct {
-    sdkVersion ai_internal_sdkVersion
-}
-
-type ai_internal_sdkVersion struct {
-    goPlatform_version string
-    opencensus_version string
-    ext_version string
-}
-
-type BaseObject struct { // Used to avoid repeat attributes
-	//ver int
-	Name string `json:"name"`
-	iKey string
-	//time string
-	//sampleRate int
-	//success bool 
-	Tags map[string]interface{}
-	//data string
-}
-
 type Options struct {
 	ServiceName        	string
 	InstrumentationKey 	string
@@ -56,16 +34,16 @@ type Options struct {
 }
 
 type Data struct {
-	BaseData RemoteDependency `json:"baseData"`
-	BaseType string `json:"baseType"`
+	BaseData RemoteDependency 	`json:"baseData"`
+	BaseType string 			`json:"baseType"`
 }
 
 type Envelope struct { // TODO: Add more for next PR
-	IKey string `json:"iKey"`
+	IKey string 				`json:"iKey"`
 	Tags map[string]interface{} `json:"tags"`
-	Name string `json:"name"`
-	Time string `json:"time"`
-	DataToSend Data `json:"data"`
+	Name string 				`json:"name"`
+	Time string 				`json:"time"`
+	DataToSend Data 			`json:"data"`
 } 
 type RemoteDependency struct {
 	Name string 		`json:"name"`
@@ -73,19 +51,6 @@ type RemoteDependency struct {
 	ResultCode string 	`json:"resultCode"`
 	Duration string 	`json:"duration"`
 	Success bool 		`json:"success"`
+	Ver int				`json:"ver"`
 	Type string			`json:"type"`
-	// responseCode string
-	// url string
-	// properties string
-	// measurements string
-}
-
-type Request struct {
-	BaseObject
-	id string
-	duration string
-	responseCode string
-	url string
-	properties string
-	measurements string
 }

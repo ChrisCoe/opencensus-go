@@ -94,30 +94,30 @@ func getCurrentTime() string {
 	return formattedTime
 }
 
-/* Calcuates number of days, hours, minutes, seconds, and miliseconds in a
+/* Calculates number of days, hours, minutes, seconds, and milliseconds in a
 	time duration. Then it properly formats into a string.
 	@param t Time Duration
 	@return formatted string 
 */
 func timeStampToDuration(t time.Duration) (string) { 
 	nanoSeconds := t.Nanoseconds()
-	miliseconds, remainder := 	divmod(nanoSeconds, 1000000)
-	seconds, remainder := 		divmod(remainder, 1000)
-	minutes, remainder := 		divmod(remainder, 60)
-	hours, remainder := 		divmod(remainder, 60)
-	days, remainder := 			divmod(remainder, 24)
+	milliseconds, remainder :=  divMod(nanoSeconds, 1000000)
+	seconds, remainder :=       divMod(remainder, 1000)
+	minutes, remainder :=       divMod(remainder, 60)
+	hours, remainder :=         divMod(remainder, 60)
+	days, remainder :=          divMod(remainder, 24)
+	
+	formattedDays:=          fmt.Sprintf("%01d", days)
+	formattedHours:=         fmt.Sprintf("%02d", hours)
+	formattedMinutes :=      fmt.Sprintf("%02d", minutes)
+	formattedSeconds :=      fmt.Sprintf("%02d", seconds)
+	formattedMilliseconds := fmt.Sprintf("%03d", milliseconds)
 
-	formattedDays:=  		 fmt.Sprintf("%01d", days)
-	formattedHours:=  		 fmt.Sprintf("%02d", hours)
-	formattedMinutes :=  	 fmt.Sprintf("%02d", minutes)
-	formattedSeconds :=  	 fmt.Sprintf("%02d", seconds)
-	formattedMiliseconds :=  fmt.Sprintf("%03d", miliseconds)
-
-	return formattedDays + "." + formattedHours + ":" + formattedMinutes + ":" + formattedSeconds + "."+ formattedMiliseconds
+	return formattedDays + "." + formattedHours + ":" + formattedMinutes + ":" + formattedSeconds + "."+ formattedMilliseconds
 }
 
 /* Performs division and returns both quotient and remainder. */
-func divmod(numerator, denominator int64) (quotient, remainder int64) {
+func divMod(numerator, denominator int64) (quotient, remainder int64) {
     quotient = numerator / denominator // integer division, decimals are truncated
     remainder = numerator % denominator
     return

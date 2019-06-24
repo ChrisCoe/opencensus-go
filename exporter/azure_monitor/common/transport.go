@@ -19,9 +19,9 @@ type Transporter struct {
 	@param envelope Contains the data package to be transmitted
 	@return The exporter created, and error if there is any
 */
-func (e *Transporter) Transmit(options *Options, env *Envelope) {
+func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	fmt.Println("Begin Transmission\n") // For debugging
-	bytesRepresentation, err := json.Marshal(env)
+	bytesRepresentation, err := json.Marshal(envelope)
 	if err != nil {
 		fmt.Println(err)
         fmt.Println("What happened?")

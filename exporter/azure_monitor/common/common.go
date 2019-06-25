@@ -3,27 +3,24 @@ package common
 
 import (
 	"context" 
+	"fmt"
+	"os"
 )
 
-type AzureMonitorContext struct {
-    SdkVersion ai_internal_sdkVersion
+var AzureMonitorContext = map[string]interface{} {
+	"ai.cloud.role": "Go Application",
+	"ai.cloud.roleInstance": getHostName(),
+	"ai.device.id": getHostName(),
+	"ai.device.type": "Other",
+	"ai.internal.sdkVersion":  "go:oc0.1",
 }
 
-type ai_internal_sdkVersion struct {
-    GoPlatform_version string
-    Opencensus_version string
-    Ext_version string
-}
-
-type BaseObject struct { // Used to avoid repeat attributes
-	Version int
-	Name string
-	Time string
-	SampleRate int
-	Success bool
-	IKey string
-	Tags string
-	Data string
+func getHostName() (string) {
+	hostName, err := os.Hostname()
+	if err != nil {
+		fmt.Println("Problem with getting host name")
+	}
+	return hostName
 }
 
 type Options struct {
@@ -35,30 +32,23 @@ type Options struct {
 }
 
 type Data struct {
-	BaseDate string
-	BaseType string
+	BaseData RemoteDependency 	`json:"baseData"`
+	BaseType string 			`json:"baseType"`
 }
 
-type Envelope struct { //TODO: Add more attributes
-	BaseObject
-}
-
+type Envelope struct { // TODO: Add more for next PR
+	IKey string 				`json:"iKey"`
+	Tags map[string]interface{} `json:"tags"`
+	Name string 				`json:"name"`
+	Time string 				`json:"time"`
+	DataToSend Data 			`json:"data"`
+} 
 type RemoteDependency struct {
-	BaseObject
-	Id string
-	Duration string
-	ResponseCode string
-	Url string
-	Properties string
-	Measurements string
-}
-
-type Request struct {
-	BaseObject
-	Id string
-	Duration string
-	ResponseCode string
-	Url string
-	Properties string
-	Measurements string
+	Name string 		`json:"name"`
+	Id string 			`json:"id"`
+	ResultCode string 	`json:"resultCode"`
+	Duration string 	`json:"duration"`
+	Success bool 		`json:"success"`
+	Ver int				`json:"ver"`
+	Type string			`json:"type"`
 }

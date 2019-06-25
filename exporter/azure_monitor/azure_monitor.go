@@ -4,14 +4,14 @@ package azure_monitor
 
 import (
 	"errors"
+	"fmt"
 	"time"
-	"fmt" // for debugging
+
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/trace"
 )
 
 type AzureTraceExporter struct {
-	ProjectID          string
 	InstrumentationKey string
 	Options            common.Options
 }
@@ -25,7 +25,6 @@ func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) 
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
 	exporter := &AzureTraceExporter {
-		ProjectID:          "abcdefghijk",
 		InstrumentationKey: Options.InstrumentationKey,
 		Options:            Options,
 	}
@@ -40,19 +39,16 @@ var _ trace.Exporter = (*AzureTraceExporter)(nil)
 func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope := common.Envelope {
 		IKey : exporter.Options.InstrumentationKey,
-		Tags : common.Azure_monitor_contect,
+		Tags : common.AzureMonitorContext,
 		Name : "Microsoft.ApplicationInsights.RemoteDependency",
-		Time : getCurrentTime(),
+		Time : getCurrentTime(sd.StartTime),
 	}
 
 	if sd.ParentSpanID.String() == "" { 
 		// TODO: Add parent span details if any
-		fmt.Println("ADD PARENT DETAILS")
-		//envelope.Tags["ai.operation.parentId"] = 
 	}
 	if sd.SpanKind == trace.SpanKindServer {
 		// TODO: Add for server case
-		fmt.Println("ADD SERVER CASE")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 	} else {
 		envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
@@ -66,7 +62,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		}
 		if sd.SpanKind == trace.SpanKindClient {
 			// TODO: Add for client case
-			fmt.Println("ADD CLIENT CASE")
 		} else {
 			currentData.Type = "INPROC" 
 		}
@@ -88,8 +83,9 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 /* Generates the current time stamp and properly formats to a string.
 	@return time stamp
 */
-func getCurrentTime() string {
-	t := time.Now()
+func getCurrentTime(t time.Time) string {
+	// All custom time formats for go have to be for the timestamp Jan 2 15:04:05 2006 MST
+	// as mentioned here (https://godoc.org/time#Time.Format) 
 	formattedTime := t.Format("2006-01-02T15:04:05.000000Z")
 	return formattedTime
 }
@@ -106,7 +102,7 @@ func timeStampToDuration(t time.Duration) (string) {
 	minutes, remainder :=       divMod(remainder, 60)
 	hours, remainder :=         divMod(remainder, 60)
 	days, remainder :=          divMod(remainder, 24)
-	
+
 	formattedDays:=          fmt.Sprintf("%01d", days)
 	formattedHours:=         fmt.Sprintf("%02d", hours)
 	formattedMinutes :=      fmt.Sprintf("%02d", minutes)
@@ -118,7 +114,5 @@ func timeStampToDuration(t time.Duration) (string) {
 
 /* Performs division and returns both quotient and remainder. */
 func divMod(numerator, denominator int64) (quotient, remainder int64) {
-    quotient = numerator / denominator // integer division, decimals are truncated
-    remainder = numerator % denominator
-    return
+    return (numerator / denominator), (numerator % denominator)
 }

@@ -3,17 +3,16 @@ package common
 
 import (
 	"context" 
-	"runtime"
-	"os"
 	"fmt"
+	"os"
 )
 
-var Azure_monitor_contect = map[string]interface{} {
-	"ai.cloud.role": "main.go",
+var AzureMonitorContext = map[string]interface{} {
+	"ai.cloud.role": "Go Application",
 	"ai.cloud.roleInstance": getHostName(),
 	"ai.device.id": getHostName(),
 	"ai.device.type": "Other",
-	"ai.internal.sdkVersion":  runtime.Version() + ":oc" + Opencensus_version + ":ext" + Ext_version,
+	"ai.internal.sdkVersion":  "go:oc0.1",
 }
 
 func getHostName() (string) {

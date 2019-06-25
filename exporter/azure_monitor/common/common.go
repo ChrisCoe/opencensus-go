@@ -12,7 +12,7 @@ var AzureMonitorContext = map[string]interface{} {
 	"ai.cloud.roleInstance": getHostName(),
 	"ai.device.id": getHostName(),
 	"ai.device.type": "Other",
-	"ai.internal.sdkVersion":  "go:oc0.1",
+	"ai.internal.sdkVersion":  "go0.1:oc0.1:exp0.1",
 }
 
 func getHostName() (string) {

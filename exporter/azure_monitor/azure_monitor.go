@@ -6,7 +6,9 @@ import (
 	"errors"
 	"time"
 	"fmt" // for debugging
+
 	"go.opencensus.io/exporter/azure_monitor/common"
+	"go.opencensus.io/exporter/azure_monitor/utils"
 	"go.opencensus.io/trace"
 )
 
@@ -41,35 +43,69 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope := common.Envelope {
 		IKey : exporter.Options.InstrumentationKey,
 		Tags : common.Azure_monitor_contect,
-		Name : "Microsoft.ApplicationInsights.RemoteDependency",
 		Time : getCurrentTime(),
 	}
 
-	if sd.ParentSpanID.String() == "" { 
+	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
+	if sd.ParentSpanID.String() != "0000000000000000" { 
 		// TODO: Add parent span details if any
 		fmt.Println("ADD PARENT DETAILS")
-		//envelope.Tags["ai.operation.parentId"] = 
+		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
+												 "." + sd.ParentSpanID.String()
 	}
 	if sd.SpanKind == trace.SpanKindServer {
 		// TODO: Add for server case
 		fmt.Println("ADD SERVER CASE")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
+		currentData := common.Request{
+			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
+			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
+			ResponseCode : "0",
+			Success : true,
+		}
+		
+		if _, isIncluded := sd.Attributes["http.method"]; isIncluded {
+			currentData.Name = sd.Attributes["http.method"].(string)
+		}
+		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
+			currentData.Name = currentData.Name + " " + sd.Attributes["http.url"].(string)
+			currentData.Url = sd.Attributes["'http.url"].(string)
+		}
+		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
+			currentData.ResponseCode = sd.Attributes["http.status_code"].(string)
+		}
+		fmt.Println("this is attributes")
+		fmt.Println(sd.Attributes)
+
+		envelope.DataToSend = common.Data {
+			BaseData : currentData,
+			BaseType : "RequestData",
+		}
+
 	} else {
 		envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
 		currentData := common.RemoteDependency{
 			Name : sd.Name,
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
 			ResultCode : "0", // TODO: Out of scope for now
-			Duration : timeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
+			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
 			Success : true,
-			Ver : 2,
+			Ver: 2,
 		}
+
 		if sd.SpanKind == trace.SpanKindClient {
-			// TODO: Add for client case
-			fmt.Println("ADD CLIENT CASE")
+			currentData.Type = "HTTP"
+			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
+				Url := sd.Attributes["http.method"].(string)
+				currentData.Name = Url // TODO: parse URL before assignment
+			}
+			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
+				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
+			}
 		} else {
 			currentData.Type = "INPROC" 
 		}
+
 		envelope.DataToSend = common.Data {
 			BaseData : currentData,
 			BaseType : "RemoteDependencyData",
@@ -92,33 +128,4 @@ func getCurrentTime() string {
 	t := time.Now()
 	formattedTime := t.Format("2006-01-02T15:04:05.000000Z")
 	return formattedTime
-}
-
-/* Calculates number of days, hours, minutes, seconds, and milliseconds in a
-	time duration. Then it properly formats into a string.
-	@param t Time Duration
-	@return formatted string 
-*/
-func timeStampToDuration(t time.Duration) (string) { 
-	nanoSeconds := t.Nanoseconds()
-	milliseconds, remainder :=  divMod(nanoSeconds, 1000000)
-	seconds, remainder :=       divMod(remainder, 1000)
-	minutes, remainder :=       divMod(remainder, 60)
-	hours, remainder :=         divMod(remainder, 60)
-	days, remainder :=          divMod(remainder, 24)
-	
-	formattedDays:=          fmt.Sprintf("%01d", days)
-	formattedHours:=         fmt.Sprintf("%02d", hours)
-	formattedMinutes :=      fmt.Sprintf("%02d", minutes)
-	formattedSeconds :=      fmt.Sprintf("%02d", seconds)
-	formattedMilliseconds := fmt.Sprintf("%03d", milliseconds)
-
-	return formattedDays + "." + formattedHours + ":" + formattedMinutes + ":" + formattedSeconds + "."+ formattedMilliseconds
-}
-
-/* Performs division and returns both quotient and remainder. */
-func divMod(numerator, denominator int64) (quotient, remainder int64) {
-    quotient = numerator / denominator // integer division, decimals are truncated
-    remainder = numerator % denominator
-    return
 }

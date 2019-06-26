@@ -4,6 +4,8 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
+
 	"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/trace"
@@ -23,7 +25,23 @@ func main() {
 
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)
+
+	// THIS IS WHERE THE DIFFERENCE STARTS
   
-	_, span := trace.StartSpan(ctx, "/koo") // This calls the function ExportSpan written in azure_monitor.go 
+	ctx, span := trace.StartSpan(ctx, "/parent") // This calls the function ExportSpan written in azure_monitor.go 
+	boo(ctx)
 	span.End()
+
+}
+
+func boo(ctx context.Context) {
+	ctx, span := trace.StartSpan(ctx, "/child")
+	defer span.End()
+
+	response, err := http.Get("http://localhost:8080/")
+	if err != nil {
+			log.Fatal(err)
+	}
+	log.Println("Response")
+	log.Println(response)
 }

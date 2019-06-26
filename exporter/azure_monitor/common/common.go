@@ -32,17 +32,18 @@ type Options struct {
 }
 
 type Data struct {
-	BaseData RemoteDependency 	`json:"baseData"`
+	BaseData interface{} 		`json:"baseData"`
 	BaseType string 			`json:"baseType"`
 }
 
-type Envelope struct { // TODO: Add more for next PR
+type Envelope struct {
 	IKey string 				`json:"iKey"`
 	Tags map[string]interface{} `json:"tags"`
 	Name string 				`json:"name"`
 	Time string 				`json:"time"`
 	DataToSend Data 			`json:"data"`
 } 
+
 type RemoteDependency struct {
 	Name string 		`json:"name"`
 	Id string 			`json:"id"`
@@ -51,4 +52,13 @@ type RemoteDependency struct {
 	Success bool 		`json:"success"`
 	Ver int				`json:"ver"`
 	Type string			`json:"type"`
+}
+
+type Request struct {
+	Name string 		`json:"name"`
+	Id string 			`json:"id"`
+	Duration string 	`json:"duration"`
+	ResponseCode string `json:"responsecode"`
+	Success bool 		`json:"success"`
+	Url interface{} 	`json:"url"`
 }

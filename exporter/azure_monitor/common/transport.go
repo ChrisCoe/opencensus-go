@@ -23,7 +23,6 @@ func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
 	response, err := http.Post(
 		options.EndPoint, 						//url
 		"application/json",		 				//header

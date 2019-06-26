@@ -44,7 +44,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		Time : getCurrentTime(sd.StartTime),
 	}
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
-	
+
 	if sd.ParentSpanID.String() != "0000000000000000" { 
 		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
 												 "." + sd.ParentSpanID.String()
@@ -80,7 +80,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			ResultCode : "0", // TODO: Out of scope for now
 			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
 			Success : true,
-			Ver: 2,
+			Ver : 2,
 		}
 		if sd.SpanKind == trace.SpanKindClient {
 			currentData.Type = "HTTP"

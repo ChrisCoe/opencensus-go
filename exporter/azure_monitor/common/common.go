@@ -12,7 +12,7 @@ var AzureMonitorContext = map[string]interface{} {
 	"ai.cloud.roleInstance": getHostName(),
 	"ai.device.id": getHostName(),
 	"ai.device.type": "Other",
-	"ai.internal.sdkVersion":  "go0.1:oc0.1:exp0.1",
+	"ai.internal.sdkVersion": "go:exp0.1",
 }
 
 func getHostName() (string) {
@@ -32,33 +32,33 @@ type Options struct {
 }
 
 type Data struct {
-	BaseData interface{} 		`json:"baseData"`
-	BaseType string 			`json:"baseType"`
+	BaseData interface{}        `json:"baseData"`
+	BaseType string             `json:"baseType"`
 }
 
 type Envelope struct {
-	IKey string 				`json:"iKey"`
+	IKey string                 `json:"iKey"`
 	Tags map[string]interface{} `json:"tags"`
-	Name string 				`json:"name"`
-	Time string 				`json:"time"`
-	DataToSend Data 			`json:"data"`
+	Name string                 `json:"name"`
+	Time string                 `json:"time"`
+	DataToSend Data             `json:"data"`
 } 
 
 type RemoteDependency struct {
-	Name string 		`json:"name"`
-	Id string 			`json:"id"`
-	ResultCode string 	`json:"resultCode"`
-	Duration string 	`json:"duration"`
-	Success bool 		`json:"success"`
-	Ver int				`json:"ver"`
-	Type string			`json:"type"`
+	Name string         `json:"name"`
+	Id string           `json:"id"`
+	ResultCode string   `json:"resultCode"`
+	Duration string     `json:"duration"`
+	Success bool        `json:"success"`
+	Ver int             `json:"ver"`
+	Type string         `json:"type"`
 }
 
 type Request struct {
-	Name string 		`json:"name"`
-	Id string 			`json:"id"`
-	Duration string 	`json:"duration"`
+	Name string         `json:"name"`
+	Id string           `json:"id"`
+	Duration string     `json:"duration"`
 	ResponseCode string `json:"responsecode"`
-	Success bool 		`json:"success"`
-	Url interface{} 	`json:"url"`
+	Success bool        `json:"success"`
+	Url string          `json:"url"`
 }

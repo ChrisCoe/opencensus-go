@@ -6,18 +6,13 @@ import (
 	"log"
 	
 	"go.opencensus.io/exporter/azure_monitor"
-	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/trace"
 )
 
 func main() {
 	ctx := context.Background()
 
-	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
-		TimeOut: 			10.0,
-	})
+	exporter, err := azure_monitor.NewAzureTraceExporter("111a0d2f-ab53-4b62-a54f-4722f09fd136")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -34,3 +34,13 @@ func divMod(numerator, denominator int64) (quotient, remainder int64) {
     remainder = numerator % denominator
     return
 }
+
+/* Generates the current time stamp and properly formats to a string.
+	@return time stamp
+*/
+func FormatTime(t time.Time) string {
+	// All custom time formats for go have to be for the timestamp Jan 2 15:04:05 2006 MST
+	// as mentioned here (https://godoc.org/time#Time.Format) 
+	formattedTime := t.Format("2006-01-02T15:04:05.000000Z")
+	return formattedTime
+}

@@ -5,7 +5,6 @@ package azure_monitor
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -21,14 +20,20 @@ type AzureTraceExporter struct {
 	@param options holds specific attributes for the new exporter
 	@return The exporter created and error if there is any
 */
-func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) {
-	if Options.InstrumentationKey == "" {
+func NewAzureTraceExporter(IKey string) (*AzureTraceExporter, error) {
+	if IKey == "" {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
-	exporter := &AzureTraceExporter {
-		InstrumentationKey: Options.InstrumentationKey,
-		Options:            Options,
+	currentOptions := common.Options {
+		InstrumentationKey: IKey,
+		EndPoint:           "https://dc.services.visualstudio.com/v2/track",
+		TimeOut: 			10.0,
 	}
+	exporter := &AzureTraceExporter {
+		InstrumentationKey: currentOptions.InstrumentationKey,
+		Options:            currentOptions,
+	}
+	
 	return exporter, nil
 }
 
@@ -41,7 +46,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope := common.Envelope {
 		IKey : exporter.Options.InstrumentationKey,
 		Tags : common.AzureMonitorContext,
-		Time : getCurrentTime(sd.StartTime),
+		Time : utils.FormatTime(sd.StartTime),
 	}
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
 
@@ -106,14 +111,4 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 
 	fmt.Printf("Name: %s\nTraceID: %x\nSpanID: %x\nParentSpanID: %x\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
 		sd.Name, sd.TraceID, sd.SpanID, sd.ParentSpanID, sd.StartTime, sd.EndTime, sd.Annotations)
-}
-
-/* Generates the current time stamp and properly formats to a string.
-	@return time stamp
-*/
-func getCurrentTime(t time.Time) string {
-	// All custom time formats for go have to be for the timestamp Jan 2 15:04:05 2006 MST
-	// as mentioned here (https://godoc.org/time#Time.Format) 
-	formattedTime := t.Format("2006-01-02T15:04:05.000000Z")
-	return formattedTime
 }

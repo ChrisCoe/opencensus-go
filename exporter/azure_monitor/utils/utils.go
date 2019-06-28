@@ -6,6 +6,12 @@ import (
 	"fmt" // for debugging
 )
 
+const (
+	// All custom time formats for go have to be for the timestamp Jan 2 15:04:05 2006 MST
+	// as mentioned here (https://godoc.org/time#Time.Format) 
+	TimeFormat = "2006-01-02T15:04:05.000000Z"
+)
+
 /* Calculates number of days, hours, minutes, seconds, and milliseconds in a
 	time duration. Then it properly formats into a string.
 	@param t Time Duration
@@ -39,8 +45,6 @@ func divMod(numerator, denominator int64) (quotient, remainder int64) {
 	@return time stamp
 */
 func FormatTime(t time.Time) string {
-	// All custom time formats for go have to be for the timestamp Jan 2 15:04:05 2006 MST
-	// as mentioned here (https://godoc.org/time#Time.Format) 
-	formattedTime := t.Format("2006-01-02T15:04:05.000000Z")
+	formattedTime := t.Format(TimeFormat)
 	return formattedTime
 }

@@ -71,7 +71,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			currentData.Url = sd.Attributes["http.url"].(string)
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-			fmt.Println(strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10))
 			currentData.ResponseCode = strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10)
 		}
 		envelope.DataToSend = common.Data {
@@ -92,12 +91,13 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		if sd.SpanKind == trace.SpanKindClient {
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-				Url := sd.Attributes["http.method"].(string)
-			if(Url != "") {
+				Url := sd.Attributes["http.url"].(string)
+				if Url != "" {
 					currentData.Name = utils.UrlToDependencyName(Url) // TODO: fix Parse for url
+				}
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
+				currentData.ResultCode =  strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10)
 			}
 		} else {
 			currentData.Type = "INPROC" 

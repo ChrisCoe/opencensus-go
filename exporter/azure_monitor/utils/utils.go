@@ -2,6 +2,7 @@ package utils
 // Package: Functions used for exporters
 
 import (
+	"fmt"
 	"log"
 	"net/url"
 	"time"

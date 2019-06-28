@@ -23,7 +23,7 @@ func main() {
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 		trace.RegisterExporter(exporter)
 
-		_, span := trace.StartSpan(ctx, "/serverBoy") // This calls the function ExportSpan written in azure_monitor.go 
+		_, span := trace.StartSpan(ctx, "/serverSide") // This calls the function ExportSpan written in azure_monitor.go 
 
 		span.End()
 	})

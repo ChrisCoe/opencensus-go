@@ -2,10 +2,9 @@ package utils
 // Package: Functions used for exporters
 
 import (
+	"log"
 	"net/url"
 	"time"
-	"fmt" // for debugging
-	"log"
 )
 
 const (
@@ -51,8 +50,8 @@ func FormatTime(t time.Time) string {
 	return formattedTime
 }
 
+/* Get netloc of url given a string */
 func UrlToDependencyName(inputUrl string) string {
-	fmt.Println("Url EXTRACTION called")
 	urlParsed, err := url.ParseRequestURI(inputUrl)
 	if err != nil {
 		log.Fatal(err)

@@ -56,7 +56,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 												 "." + sd.ParentSpanID.String()
 	}
 	if sd.SpanKind == trace.SpanKindServer {
-		fmt.Println("SERVER")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 		currentData := common.Request{
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
@@ -91,17 +90,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Ver : 2,
 		}
 		if sd.SpanKind == trace.SpanKindClient {
-			fmt.Println("CLIENT")
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.method"].(string)
-				currentData.Name = utils.UrlToDependencyName(Url) // TODO: parse URL before assignment
+			if(Url != "") {
+					currentData.Name = utils.UrlToDependencyName(Url) // TODO: fix Parse for url
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				fmt.Println("qqqq")
-				fmt.Println(sd.Attributes)
-				boy := sd.Attributes["http.status_code"].(string)
-				currentData.ResultCode = boy
+				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
 			}
 		} else {
 			currentData.Type = "INPROC" 

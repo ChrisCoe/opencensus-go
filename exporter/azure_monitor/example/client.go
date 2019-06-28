@@ -28,15 +28,12 @@ func main() {
 }
 
 func boo(ctx context.Context) {
-	fmt.Println("start BOO")
 	ctx, span := trace.StartSpan(ctx, "/child")
 	defer span.End()
 
-	// response, err := http.Get("http://localhost:8080/")
-	// if err != nil {
-			
-	// 		log.Fatal(err)
-	// }
-	// fmt.Println(response)
-	// fmt.Println("end BOO")
+	response, err := http.Get("http://localhost:8080/")
+	if err != nil {
+			log.Fatal(err)
+	}
+	fmt.Println(response.StatusCode)
 }

@@ -1,4 +1,5 @@
 package main
+// Package: Runs code for using Azure exporter
 
 import (
 
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"fmt"
 	"log"
 	"net/http"
 
@@ -48,18 +50,15 @@ func main() {
 
 	client := &http.Client{}
 	for {
-		body := strings.NewReader(strings.Repeat("a", rand.Intn(777)+1))
+		body := strings.NewReader(strings.Repeat("aBa ", rand.Intn(10)+1))
+		fmt.Println("urlBoy")
+		fmt.Println(cst.URL)
 		req, _ := http.NewRequest("POST", cst.URL, body)
 		res, _ := client.Do(req)
 		io.Copy(ioutil.Discard, res.Body)
 		res.Body.Close()
 		time.Sleep(979 * time.Millisecond)
 	}
-
-	// // Now use the instrumnted handler
-	// if err := http.ListenAndServe(":8080", och); err != nil {
-	// 	log.Fatalf("Failed to run the server: %v", err)
-	// }
 }
 
 func enableObservabilityAndExporters() {

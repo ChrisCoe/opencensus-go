@@ -1,4 +1,5 @@
 package main
+// Package: Runs code for using Azure exporter
 
 import (
 	"context"
@@ -7,7 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	
+
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/exporter/azure_monitor/utils"

@@ -7,15 +7,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
+	
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/exporter/azure_monitor"
+	"go.opencensus.io/exporter/azure_monitor/utils"
 	"go.opencensus.io/trace"
 )
 
 func main() {
 	ctx := context.Background() // In other usages, the context would have been passed down after starting some traces.
-	enableObservabilityAndExporters()
+	utils.enableObservabilityAndExporter()
 	req, _ := http.NewRequest("GET", "https://en.wikipedia.org/wiki/Chicken", nil)
 	// It is imperative that req.WithContext is used to
 	// propagate context and use it in the request.
@@ -29,13 +30,4 @@ func main() {
 	io.Copy(ioutil.Discard, res.Body)
 	_ = res.Body.Close()
 	fmt.Println(res)
-}
-
-func enableObservabilityAndExporters() {
-	exporter, err := azure_monitor.NewAzureTraceExporter("111a0d2f-ab53-4b62-a54f-4722f09fd136")
-	if err != nil {
-		log.Fatal(err)
-	}
-	trace.RegisterExporter(exporter)
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 }

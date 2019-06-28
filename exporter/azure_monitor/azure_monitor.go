@@ -93,7 +93,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.url"].(string)
 				if Url != "" {
-					currentData.Name = utils.UrlToDependencyName(Url) // TODO: fix Parse for url
+					currentData.Name = utils.UrlToDependencyName(Url)
 				}
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {

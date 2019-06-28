@@ -13,10 +13,10 @@ import (
 	"time"
 
 	"go.opencensus.io/exporter/azure_monitor"
+	"go.opencensus.io/exporter/azure_monitor/utils"
 	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/trace"
-
 	"go.opencensus.io/stats/view"
+	"go.opencensus.io/trace"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("Failed to register server views for HTTP metrics: %v", err)
 	}
 	// Enable observability to extract and examine stats.
-	enableObservabilityAndExporters()
+	utils.enableObservabilityAndExporter()
 	// The handler containing your business logic to process requests.
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Consume the request's body entirely.
@@ -54,13 +54,4 @@ func main() {
 		res.Body.Close()
 		time.Sleep(979 * time.Millisecond)
 	}
-}
-
-func enableObservabilityAndExporters() {
-	exporter, err := azure_monitor.NewAzureTraceExporter("111a0d2f-ab53-4b62-a54f-4722f09fd136")
-	if err != nil {
-		log.Fatal(err)
-	}
-	trace.RegisterExporter(exporter)
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 }

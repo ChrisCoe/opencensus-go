@@ -58,7 +58,7 @@ type Request struct {
 	Name string         `json:"name"`
 	Id string           `json:"id"`
 	Duration string     `json:"duration"`
-	ResponseCode string `json:"responsecode"`
+	ResponseCode string `json:"responseCode"`
 	Success bool        `json:"success"`
 	Url string          `json:"url"`
 }

@@ -5,6 +5,7 @@ package azure_monitor
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -55,6 +56,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 												 "." + sd.ParentSpanID.String()
 	}
 	if sd.SpanKind == trace.SpanKindServer {
+		fmt.Println("SERVER")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 		currentData := common.Request{
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
@@ -67,10 +69,11 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		}
 		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 			currentData.Name = currentData.Name + " " + sd.Attributes["http.url"].(string)
-			currentData.Url = sd.Attributes["'http.url"].(string)
+			currentData.Url = sd.Attributes["http.url"].(string)
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-			currentData.ResponseCode = sd.Attributes["http.status_code"].(string)
+			fmt.Println(strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10))
+			currentData.ResponseCode = strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10)
 		}
 		envelope.DataToSend = common.Data {
 			BaseData : currentData,
@@ -88,13 +91,17 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Ver : 2,
 		}
 		if sd.SpanKind == trace.SpanKindClient {
+			fmt.Println("CLIENT")
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.method"].(string)
-				currentData.Name = Url // TODO: parse URL before assignment
+				currentData.Name = utils.UrlToDependencyName(Url) // TODO: parse URL before assignment
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
+				fmt.Println("qqqq")
+				fmt.Println(sd.Attributes)
+				boy := sd.Attributes["http.status_code"].(string)
+				currentData.ResultCode = boy
 			}
 		} else {
 			currentData.Type = "INPROC" 

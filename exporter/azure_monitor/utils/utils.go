@@ -2,8 +2,10 @@ package utils
 // Package: Functions used for exporters
 
 import (
+	"net/url"
 	"time"
 	"fmt" // for debugging
+	"log"
 )
 
 const (
@@ -47,4 +49,13 @@ func divMod(numerator, denominator int64) (quotient, remainder int64) {
 func FormatTime(t time.Time) string {
 	formattedTime := t.Format(TimeFormat)
 	return formattedTime
+}
+
+func UrlToDependencyName(inputUrl string) string {
+	fmt.Println("Url EXTRACTION called")
+	urlParsed, err := url.ParseRequestURI(inputUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return urlParsed.Host
 }

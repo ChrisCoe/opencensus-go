@@ -1,5 +1,5 @@
 package utils
-// Package: Functions used for exporters
+// Package: Utility functions used for exporters
 
 import (
 	"fmt"
@@ -58,14 +58,4 @@ func UrlToDependencyName(inputUrl string) string {
 		log.Fatal(err)
 	}
 	return urlParsed.Host
-}
-
-/* Create and set exporter for Azure Monitor */
-func enableObservabilityAndExporter() {
-	exporter, err := azure_monitor.NewAzureTraceExporter("111a0d2f-ab53-4b62-a54f-4722f09fd136")
-	if err != nil {
-		log.Fatal(err)
-	}
-	trace.RegisterExporter(exporter)
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 }

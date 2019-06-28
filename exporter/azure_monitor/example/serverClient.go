@@ -25,7 +25,7 @@ func main() {
 		log.Fatalf("Failed to register server views for HTTP metrics: %v", err)
 	}
 	// Enable observability to extract and examine stats.
-	utils.enableObservabilityAndExporter()
+	creator.EnableObservabilityAndExporter()
 	// The handler containing your business logic to process requests.
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Consume the request's body entirely.

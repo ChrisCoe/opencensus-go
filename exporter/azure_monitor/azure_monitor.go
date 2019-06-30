@@ -38,6 +38,8 @@ func NewAzureTraceExporter(IKey string) (*AzureTraceExporter, error) {
 	return exporter, nil
 }
 
+
+// Compile time assertion for AzureTraceExporter
 var _ trace.Exporter = (*AzureTraceExporter)(nil)
 
 /*	Opencensus trace function required by interface. Called for every span/trace call.

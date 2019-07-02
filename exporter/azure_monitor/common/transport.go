@@ -39,4 +39,5 @@ func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
 	if err != nil {
 		fmt.Println("Error: check decoder\n")
 	}
+	fmt.Println(result)
 }

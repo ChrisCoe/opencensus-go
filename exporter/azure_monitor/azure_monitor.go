@@ -21,18 +21,13 @@ type AzureTraceExporter struct {
 	@param options holds specific attributes for the new exporter
 	@return The exporter created and error if there is any
 */
-func NewAzureTraceExporter(IKey string) (*AzureTraceExporter, error) {
-	if IKey == "" {
+func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) {
+	if Options.InstrumentationKey == "" {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
-	currentOptions := common.Options {
-		InstrumentationKey: IKey,
-		EndPoint:           "https://dc.services.visualstudio.com/v2/track",
-		TimeOut: 			10.0,
-	}
 	exporter := &AzureTraceExporter {
-		InstrumentationKey: currentOptions.InstrumentationKey,
-		Options:            currentOptions,
+		InstrumentationKey: Options.InstrumentationKey,
+		Options:            Options,
 	}
 	
 	return exporter, nil
@@ -51,11 +46,13 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	}
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
 
-	if sd.ParentSpanID.String() != "0000000000000000" { 
+	if sd.ParentSpanID.String() != "0000000000000000" {
+		fmt.Println("HAS PARENT")
 		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
 												 "." + sd.ParentSpanID.String()
 	}
 	if sd.SpanKind == trace.SpanKindServer {
+		fmt.Println("SERVER")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 		currentData := common.Request{
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
@@ -89,6 +86,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Ver : 2,
 		}
 		if sd.SpanKind == trace.SpanKindClient {
+			fmt.Println("CLIENT")
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.url"].(string)

@@ -3,18 +3,25 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
 	"go.opencensus.io/exporter/azure_monitor"
+	"go.opencensus.io/exporter/azure_monitor/common"
+	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
 
 func main() {
 	ctx := context.Background()
 
-	exporter, err := azure_monitor.NewAzureTraceExporter("111a0d2f-ab53-4b62-a54f-4722f09fd136")
+	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
+		InstrumentationKey: "111a0d2f-ab53-4b62-a54f-4722f09fd136", // add your InstrumentationKey
+		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
+		TimeOut: 			10.0,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,9 +38,16 @@ func boo(ctx context.Context) {
 	ctx, span := trace.StartSpan(ctx, "/child")
 	defer span.End()
 
-	response, err := http.Get("http://localhost:8080/")
+	req, _ := http.NewRequest("GET", "http://localhost:8080/", nil)
+	// It is imperative that req.WithContext is used to
+	// propagate context and use it in the request.
+	req = req.WithContext(ctx)
+	client := &http.Client{Transport: &ochttp.Transport{}}
+	res, err := client.Do(req)
 	if err != nil {
-			log.Fatal(err)
+		log.Fatalf("Failed to make the request: %v", err)
 	}
-	fmt.Println(response.StatusCode)
+	// Consume the body and close it.
+	io.Copy(ioutil.Discard, res.Body)
+	_ = res.Body.Close()
 }

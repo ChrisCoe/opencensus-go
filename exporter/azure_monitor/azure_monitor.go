@@ -47,12 +47,10 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
 
 	if sd.ParentSpanID.String() != "0000000000000000" {
-		fmt.Println("HAS PARENT")
 		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
 												 "." + sd.ParentSpanID.String()
 	}
 	if sd.SpanKind == trace.SpanKindServer {
-		fmt.Println("SERVER")
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 		currentData := common.Request{
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
@@ -86,7 +84,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Ver : 2,
 		}
 		if sd.SpanKind == trace.SpanKindClient {
-			fmt.Println("CLIENT")
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.url"].(string)

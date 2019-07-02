@@ -14,21 +14,22 @@ import (
 
 func main() {
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello, Chicken!"))
+
 		ctx := context.Background()
 		exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-			InstrumentationKey: "111a0d2f-ab53-4b62-a54f-4722f09fd136", // add your InstrumentationKey
+			InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
 			EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
 			TimeOut: 			10.0,
 		})
 		if err != nil {
 			log.Fatal(err)
 		}
-		w.Write([]byte("Hello, Chicken!"))
+
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 		trace.RegisterExporter(exporter)
 
 		_, span := trace.StartSpan(ctx, "/serverSide") // This calls the function ExportSpan written in azure_monitor.go 
-
 		span.End()
 	})
 

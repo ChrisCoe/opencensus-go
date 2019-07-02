@@ -18,7 +18,7 @@ func main() {
 	ctx := context.Background()
 
 	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "111a0d2f-ab53-4b62-a54f-4722f09fd136", // add your InstrumentationKey
+		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
 		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
 		TimeOut: 			10.0,
 	})
@@ -43,11 +43,11 @@ func boo(ctx context.Context) {
 	// propagate context and use it in the request.
 	req = req.WithContext(ctx)
 	client := &http.Client{Transport: &ochttp.Transport{}}
-	res, err := client.Do(req)
+	response, err := client.Do(req)
 	if err != nil {
 		log.Fatalf("Failed to make the request: %v", err)
 	}
 	// Consume the body and close it.
-	io.Copy(ioutil.Discard, res.Body)
-	_ = res.Body.Close()
+	io.Copy(ioutil.Discard, response.Body)
+	_ = response.Body.Close()
 }

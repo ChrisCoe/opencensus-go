@@ -33,7 +33,6 @@ func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) 
 		Options.TimeOut = 10.0
 	}
 	exporter := &AzureTraceExporter {
-		//InstrumentationKey: Options.InstrumentationKey,
 		Options:            Options,
 	}
 	

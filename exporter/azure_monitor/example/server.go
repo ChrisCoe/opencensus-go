@@ -17,6 +17,7 @@ func main() {
 		w.Write([]byte("Hello, Chicken!"))
 
 		ctx := context.Background()
+		
 		exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
 			InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
 		})

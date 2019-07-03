@@ -36,10 +36,10 @@ func boo(ctx context.Context) {
 	ctx, span := trace.StartSpan(ctx, "/child")
 	defer span.End()
 
-	req, _ := http.NewRequest("GET", "http://localhost:8080/", nil)
+	request, _ := http.NewRequest("GET", "http://localhost:8080/", nil)
 	// It is imperative that req.WithContext is used to
 	// propagate context and use it in the request.
-	req = req.WithContext(ctx)
+	request = request.WithContext(ctx)
 	client := &http.Client{Transport: &ochttp.Transport{}}
 	response, err := client.Do(req)
 	if err != nil {

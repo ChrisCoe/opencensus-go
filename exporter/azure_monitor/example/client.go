@@ -19,8 +19,6 @@ func main() {
 
 	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
 		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-		EndPoint: 			"https://dc.services.visualstudio.com/v2/track",
-		TimeOut: 			10.0,
 	})
 	if err != nil {
 		log.Fatal(err)

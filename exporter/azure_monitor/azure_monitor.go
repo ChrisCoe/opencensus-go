@@ -5,6 +5,7 @@ package azure_monitor
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
@@ -25,8 +26,14 @@ func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) 
 	if Options.InstrumentationKey == "" {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
+	if Options.EndPoint == "" {
+		Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
+	}
+	if Options.TimeOut == 0 {
+		Options.TimeOut = 10.0
+	}
 	exporter := &AzureTraceExporter {
-		InstrumentationKey: Options.InstrumentationKey,
+		//InstrumentationKey: Options.InstrumentationKey,
 		Options:            Options,
 	}
 	
@@ -88,7 +95,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := sd.Attributes["http.url"].(string)
 				if Url != "" {
-					currentData.Name = utils.UrlToDependencyName(Url)
+					name, err := utils.UrlToDependencyName(Url)
+					if err != nil {
+						log.Println(err) // We don't want to stop the span
+					}
+					currentData.Name = name
+				} else {
+					log.Println(errors.New("empty string url in span"))
+					currentData.Name = ""
 				}
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {

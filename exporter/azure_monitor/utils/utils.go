@@ -2,8 +2,8 @@ package utils
 // Package: Utility functions used for exporters
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"net/url"
 	"time"
 )
@@ -52,10 +52,10 @@ func FormatTime(t time.Time) string {
 }
 
 /* Get netloc of url given a string */
-func UrlToDependencyName(inputUrl string) string {
+func UrlToDependencyName(inputUrl string) (string, error) {
 	urlParsed, err := url.ParseRequestURI(inputUrl)
 	if err != nil {
-		log.Fatal(err)
+		return "", errors.New("can't parse url attribute in span")
 	}
-	return urlParsed.Host
+	return urlParsed.Host, nil
 }

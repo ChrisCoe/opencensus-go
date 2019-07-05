@@ -20,20 +20,20 @@ type AzureTraceExporter struct {
 	@param options holds specific attributes for the new exporter
 	@return The exporter created and error if there is any
 */
-func NewAzureTraceExporter(IKey string) (*AzureTraceExporter, error) {
-	if IKey == "" {
+func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) {
+	if Options.InstrumentationKey == "" {
 		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
 	}
-	currentOptions := common.Options {
-		InstrumentationKey: IKey,
-		EndPoint:           "https://dc.services.visualstudio.com/v2/track",
-		TimeOut: 			10.0,
+	if Options.EndPoint == "" {
+		Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
+	}
+	if Options.TimeOut == 0 {
+		Options.TimeOut = 10.0
 	}
 	exporter := &AzureTraceExporter {
-		InstrumentationKey: currentOptions.InstrumentationKey,
-		Options:            currentOptions,
+		Options:            Options,
 	}
-	
+
 	return exporter, nil
 }
 

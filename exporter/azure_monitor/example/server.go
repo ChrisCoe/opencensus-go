@@ -1,4 +1,5 @@
 package main
+// Package: Runs code for using Azure exporter
 
 import (
 	"context"
@@ -30,7 +31,7 @@ func main() {
 		trace.RegisterExporter(exporter)
 	
 		_, span := trace.StartSpan(ctx, "/serverSide") // This calls the function ExportSpan written in azure_monitor.go 
-		span.End() //TODO: Investigate why this span is not considered trace.SpanKindServer
+		span.End()
 	})
 
 	och := &ochttp.Handler{

@@ -3,6 +3,8 @@ package main
 
 import (
 	"context"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -35,8 +37,16 @@ func boo(ctx context.Context) {
 	ctx, span := trace.StartSpan(ctx, "/child")
 	defer span.End()
 
-	response, err := http.Get("http://localhost:8080/")
+	request, _ := http.NewRequest("GET", "http://localhost:8080/", nil)
+	// It is imperative that req.WithContext is used to
+	// propagate context and use it in the request.
+	request = request.WithContext(ctx)
+	client := &http.Client{Transport: &ochttp.Transport{}}
+	response, err := client.Do(req)
 	if err != nil {
-			log.Fatal(err)
+		log.Fatalf("Failed to make the request: %v", err)
 	}
+	// Consume the body and close it.
+	io.Copy(ioutil.Discard, response.Body)
+	_ = response.Body.Close()
 }

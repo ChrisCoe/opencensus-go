@@ -11,16 +11,17 @@ import (
 )
 
 func main() {
+	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
+		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+	trace.RegisterExporter(exporter)
+	
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, World!"))
-		exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-			InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-		})
-		if err != nil {
-			log.Fatal(err)
-		}
-		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-		trace.RegisterExporter(exporter)
 	})
 	och := &ochttp.Handler{
 		Handler: originalHandler, // The handler you'd have used originally

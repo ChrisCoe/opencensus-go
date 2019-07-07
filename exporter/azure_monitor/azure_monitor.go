@@ -5,6 +5,8 @@ package azure_monitor
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -12,29 +14,20 @@ import (
 )
 
 type AzureTraceExporter struct {
-	InstrumentationKey string
+	InstrumentationKey 	string
 	Options            common.Options
 }
 
-/*	Creates an Azure Trace Exporter.
-	@param options holds specific attributes for the new exporter
-	@return The exporter created and error if there is any
+/*	Azure Trace Exporter constructor with default settings. The instrumentation key
+	can be set with an environmental variable, or it could be set later.
+	@return The exporter created with the instrumentation key if already set.
 */
-func NewAzureTraceExporter(Options common.Options) (*AzureTraceExporter, error) {
-	if Options.InstrumentationKey == "" {
-		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
-	}
-	if Options.EndPoint == "" {
-		Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
-	}
-	if Options.TimeOut == 0 {
-		Options.TimeOut = 10.0
-	}
-	exporter := &AzureTraceExporter {
-		Options:            Options,
-	}
-
-	return exporter, nil
+func NewAzureTraceExporter() (*AzureTraceExporter) {
+	exporter := new(AzureTraceExporter)
+	exporter.InstrumentationKey = os.Getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
+	exporter.Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
+	exporter.Options.TimeOut = 10.0
+	return exporter
 }
 
 var _ trace.Exporter = (*AzureTraceExporter)(nil)
@@ -43,8 +36,11 @@ var _ trace.Exporter = (*AzureTraceExporter)(nil)
 	@param sd Span data retrieved by opencensus
 */
 func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
+	if exporter.InstrumentationKey == "" {
+		log.Fatal(errors.New("missing Instrumentation Key for Azure Exporter"))
+	}
 	envelope := common.Envelope {
-		IKey : exporter.Options.InstrumentationKey,
+		IKey : exporter.InstrumentationKey,
 		Tags : common.AzureMonitorContext,
 		Time : utils.FormatTime(sd.StartTime),
 	}

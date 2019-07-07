@@ -2,7 +2,6 @@ package common
 // Package: Structs commonly used for both trace and log exporters
 
 import (
-	"context" 
 	"fmt"
 	"os"
 )
@@ -24,9 +23,6 @@ func getHostName() (string) {
 }
 
 type Options struct {
-	ServiceName        	string
-	InstrumentationKey 	string
-	Context            	context.Context
 	EndPoint			string
 	TimeOut				int
 }

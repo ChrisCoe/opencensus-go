@@ -5,6 +5,7 @@ package azure_monitor
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -49,8 +50,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		Time : utils.FormatTime(sd.StartTime),
 	}
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
-
-	if sd.ParentSpanID.String() != "0000000000000000" { 
+	if sd.ParentSpanID.String() != "0000000000000000" {
 		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
 												 "." + sd.ParentSpanID.String()
 	}
@@ -67,10 +67,10 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		}
 		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 			currentData.Name = currentData.Name + " " + sd.Attributes["http.url"].(string)
-			currentData.Url = sd.Attributes["'http.url"].(string)
+			currentData.Url = sd.Attributes["http.url"].(string)
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-			currentData.ResponseCode = sd.Attributes["http.status_code"].(string)
+			currentData.ResponseCode = strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10)
 		}
 		envelope.DataToSend = common.Data {
 			BaseData : currentData,
@@ -94,7 +94,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 				currentData.Name = Url // TODO: parse URL before assignment
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
+				currentData.ResultCode =  strconv.FormatInt(sd.Attributes["http.status_code"].(int64), 10)
 			}
 		} else {
 			currentData.Type = "INPROC" 

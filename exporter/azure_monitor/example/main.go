@@ -12,8 +12,7 @@ func main() {
 	ctx := context.Background()
 
 	exporter := azure_monitor.NewAzureTraceExporter()
-	// Line below only required if APPINSIGHTS_INSTRUMENTATIONKEY is not set
-	//exporter.InstrumentationKey = "111a0d2f-ab53-4b62-a54f-4722f09fd136" 
+	exporter.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
 
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)

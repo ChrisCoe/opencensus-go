@@ -16,12 +16,9 @@ import (
 func main() {
 	ctx := context.Background() // In other usages, the context would have been passed down after starting some traces.
 	
-	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	exporter := azure_monitor.NewAzureTraceExporter()
+	exporter.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
+	
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)
 

@@ -14,17 +14,17 @@ import (
 )
 
 type AzureTraceExporter struct {
-	InstrumentationKey 	string
+	InstrumentationKey string
 	Options            common.Options
 }
 
 /*	Azure Trace Exporter constructor with default settings. The instrumentation key
-	can be set with an environmental variable, or it could be set later.
+	needs to be set after calling this function. TODO: Add ability to get ikey from 
+	environment variable.
 	@return The exporter created with the instrumentation key if already set.
 */
 func NewAzureTraceExporter() (*AzureTraceExporter) {
 	exporter := new(AzureTraceExporter)
-	exporter.InstrumentationKey = os.Getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
 	exporter.Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
 	exporter.Options.TimeOut = 10.0
 	return exporter

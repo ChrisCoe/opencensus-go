@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"os"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -14,7 +13,6 @@ import (
 )
 
 type AzureTraceExporter struct {
-	InstrumentationKey string
 	Options            common.Options
 }
 
@@ -36,15 +34,15 @@ var _ trace.Exporter = (*AzureTraceExporter)(nil)
 	@param sd Span data retrieved by opencensus
 */
 func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
-	if exporter.InstrumentationKey == "" {
+	if exporter.Options.InstrumentationKey == "" {
 		log.Fatal(errors.New("missing Instrumentation Key for Azure Exporter"))
 	}
 	envelope := common.Envelope {
-		IKey : exporter.InstrumentationKey,
+		IKey : exporter.Options.InstrumentationKey,
 		Tags : common.AzureMonitorContext,
 		Time : utils.FormatTime(sd.StartTime),
 	}
-
+	
 	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
 	if sd.ParentSpanID.String() != "0000000000000000" {
 		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
@@ -59,14 +57,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Success : true,
 		}
 		if _, isIncluded := sd.Attributes["http.method"]; isIncluded {
-			currentData.Name = fmt.Sprintf("%s", sd.Attributes["http.method"])
+			currentData.Name = sd.Attributes["http.method"].(string)
 		}
 		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-			currentData.Name = fmt.Sprintf("%s %s", currentData.Name, sd.Attributes["http.url"])
-			currentData.Url = fmt.Sprintf("%s", sd.Attributes["http.url"])
+			currentData.Name = currentData.Name + " " + sd.Attributes["http.url"].(string)
+			currentData.Url = sd.Attributes["'http.url"].(string)
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-			currentData.ResponseCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])
+			currentData.ResponseCode = sd.Attributes["http.status_code"].(string)
 		}
 		envelope.DataToSend = common.Data {
 			BaseData : currentData,
@@ -86,11 +84,11 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		if sd.SpanKind == trace.SpanKindClient {
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-				Url := fmt.Sprintf("%s", sd.Attributes["http.url"])
+				Url := sd.Attributes["http.method"].(string)
 				currentData.Name = Url // TODO: parse URL before assignment
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				currentData.ResultCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])
+				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
 			}
 		} else {
 			currentData.Type = "INPROC" 

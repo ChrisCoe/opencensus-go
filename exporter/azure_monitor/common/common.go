@@ -24,6 +24,7 @@ func getHostName() (string) {
 }
 
 type Options struct {
+	InstrumentationKey  string
 	ServiceName        	string
 	Context            	context.Context
 	EndPoint			string

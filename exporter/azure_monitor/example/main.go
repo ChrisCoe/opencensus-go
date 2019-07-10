@@ -12,7 +12,7 @@ func main() {
 	ctx := context.Background()
 
 	exporter := azure_monitor.NewAzureTraceExporter()
-	exporter.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
+	exporter.Options.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
 
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)

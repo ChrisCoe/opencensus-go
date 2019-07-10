@@ -57,14 +57,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			Success : true,
 		}
 		if _, isIncluded := sd.Attributes["http.method"]; isIncluded {
-			currentData.Name = sd.Attributes["http.method"].(string)
+			currentData.Name = fmt.Sprintf("%s", sd.Attributes["http.method"])
 		}
 		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-			currentData.Name = currentData.Name + " " + sd.Attributes["http.url"].(string)
-			currentData.Url = sd.Attributes["'http.url"].(string)
+			currentData.Name = fmt.Sprintf("%s %s", currentData.Name, sd.Attributes["http.url"])
+			currentData.Url = fmt.Sprintf("%s", sd.Attributes["http.url"])
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-			currentData.ResponseCode = sd.Attributes["http.status_code"].(string)
+			currentData.ResponseCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])
 		}
 		envelope.DataToSend = common.Data {
 			BaseData : currentData,
@@ -84,11 +84,11 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		if sd.SpanKind == trace.SpanKindClient {
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-				Url := sd.Attributes["http.method"].(string)
+				Url := fmt.Sprintf("%s", sd.Attributes["http.url"])
 				currentData.Name = Url // TODO: parse URL before assignment
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
-				currentData.ResultCode = sd.Attributes["http.status_code"].(string)
+				currentData.ResultCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])
 			}
 		} else {
 			currentData.Type = "INPROC" 

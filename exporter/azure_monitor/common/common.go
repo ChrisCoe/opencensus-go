@@ -24,11 +24,11 @@ func getHostName() (string) {
 }
 
 type Options struct {
+	ServiceName         string
 	InstrumentationKey  string
-	ServiceName        	string
-	Context            	context.Context
-	EndPoint			string
-	TimeOut				int
+	Context             context.Context
+	EndPoint            string
+	TimeOut             int
 }
 
 type Data struct {

@@ -66,7 +66,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			currentData.Name = fmt.Sprintf("%s", sd.Attributes["http.method"])
 		}
 		if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
-			currentData.Name = currentData.Name + " " + fmt.Sprintf("%s", sd.Attributes["http.url"])
+			currentData.Name = fmt.Sprintf("%s %s", currentData.Name, sd.Attributes["http.url"])
 			currentData.Url = fmt.Sprintf("%s", sd.Attributes["http.url"])
 		}
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {

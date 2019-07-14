@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	//"time"
 
 	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
@@ -43,15 +44,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		Time : utils.FormatTime(sd.StartTime),
 	}
 	
-	envelope.Tags["ai.operation.id"] = sd.SpanContext.TraceID.String()
+	envelope.Tags["ai.operation.id"] = sd.TraceID.String()
 	if sd.ParentSpanID.String() != "0000000000000000" {
-		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() + 
-												 "." + sd.ParentSpanID.String()
+		envelope.Tags["ai.operation.parentId"] = "|" + sd.SpanContext.TraceID.String() +  "." + sd.ParentSpanID.String() + "."
 	}
 	if sd.SpanKind == trace.SpanKindServer {
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
 		currentData := common.Request{
-			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
+			Id : fmt.Sprintf("|%s.%s.",sd.TraceID, sd.SpanID),
 			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
 			ResponseCode : "0",
 			Success : true,
@@ -73,9 +73,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 
 	} else {
 		envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
+		// fmt.Println("This is sd.SpanContext.TraceID.String()")
+		// fmt.Println(sd.SpanContext.TraceID.String())
+		// fmt.Println("This is sd.TraceID")
+		// fmt.Println(sd.TraceID)
+		// fmt.Printf("This is sd.TraceID with %x\n", sd.TraceID)
 		currentData := common.RemoteDependency{
 			Name : sd.Name,
-			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
+			Id : fmt.Sprintf("|%s.%s.",sd.TraceID, sd.SpanID),
 			ResultCode : "0", // TODO: Out of scope for now
 			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
 			Success : true,
@@ -103,6 +108,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	}
 	transporter.Transmit(&exporter.Options, &envelope)
 
-	fmt.Printf("Name: %s\nTraceID: %x\nSpanID: %x\nParentSpanID: %x\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
+	fmt.Printf("Name: %s\nTraceID: %s\nSpanID: %s\nParentSpanID: %s\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
 		sd.Name, sd.TraceID, sd.SpanID, sd.ParentSpanID, sd.StartTime, sd.EndTime, sd.Annotations)
 }

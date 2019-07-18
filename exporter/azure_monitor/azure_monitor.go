@@ -3,43 +3,74 @@ package azure_monitor
 // This includes examples on how to create azure exporters to send spans.
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
 
-	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/exporter/azure_monitor/utils"
+	//"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/trace"
 )
 
-type AzureTraceExporter struct {
-	Options            common.Options
+// Exporter is an implementation of trace.Exporter that uploads spans to Azure Monitor.
+type Exporter struct {
+	ServiceName         string
+	InstrumentationKey  string
+	Context             context.Context
+	EndPoint            string
+	TimeOut             int
 }
 
-/*	Azure Trace Exporter constructor with default settings. The instrumentation key
-	needs to be set after calling this function. TODO: Add ability to get ikey from 
-	environment variable.
-	@return The exporter created with the instrumentation key if already set.
-*/
-func NewAzureTraceExporter() (*AzureTraceExporter) {
-	exporter := new(AzureTraceExporter)
-	exporter.Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
-	exporter.Options.TimeOut = 10.0
-	return exporter
+// Options are the options to be used when initializing an Azure Monitor exporter.
+type Options struct {
+	ServiceName         string
+	InstrumentationKey  string	// required by user
+	Context             context.Context
+	EndPoint            string
+	TimeOut             int
 }
 
-var _ trace.Exporter = (*AzureTraceExporter)(nil)
+// NewExporter returns an exporter that exports traces to Azure Monitor.
+func NewExporter(o Options) (*Exporter, error) {
+	if o.InstrumentationKey == "" {
+		return nil, errors.New("missing Instrumentation Key for Azure Exporter")
+	}
+	if o.EndPoint == "" {
+		o.EndPoint = "https://dc.services.visualstudio.com/v2/track"
+	}
+	if o.TimeOut == 0 {
+		o.TimeOut = 10.0
+	}
+	e := &Exporter {
+        ServiceName:         o.ServiceName,
+        InstrumentationKey:  o.InstrumentationKey,
+        Context:             o.Context,
+        EndPoint:            o.EndPoint,
+        TimeOut:             o.TimeOut,
+	}
+    return e, nil
+}
+
+// func NewAzureTraceExporter() (*AzureTraceExporter) {
+// 	exporter := new(AzureTraceExporter)
+// 	exporter.Options.EndPoint = "https://dc.services.visualstudio.com/v2/track"
+// 	exporter.Options.TimeOut = 10.0
+// 	return exporter
+// }
+
+var _ trace.Exporter = (*Exporter)(nil)
 
 /*	Opencensus trace function required by interface. Called for every span/trace call.
 	@param sd Span data retrieved by opencensus
 */
-func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
-	if exporter.Options.InstrumentationKey == "" {
+func (exporter *Exporter) ExportSpan(sd *trace.SpanData) {
+	if exporter.InstrumentationKey == "" {
 		log.Fatal(errors.New("missing Instrumentation Key for Azure Exporter"))
 	}
-	envelope := common.Envelope {
-		IKey : exporter.Options.InstrumentationKey,
-		Tags : common.AzureMonitorContext,
+	envelope := Envelope {
+		IKey : exporter.InstrumentationKey,
+		Tags : AzureMonitorContext,
 		Time : utils.FormatTime(sd.StartTime),
 	}
 	
@@ -50,7 +81,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	}
 	if sd.SpanKind == trace.SpanKindServer {
 		envelope.Name = "Microsoft.ApplicationInsights.Request"
-		currentData := common.Request{
+		currentData := Request{
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
 			Duration : utils.TimeStampToDuration(sd.EndTime.Sub(sd.StartTime)),
 			ResponseCode : "0",
@@ -66,14 +97,14 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
 			currentData.ResponseCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])
 		}
-		envelope.DataToSend = common.Data {
+		envelope.DataToSend = Data {
 			BaseData : currentData,
 			BaseType : "RequestData",
 		}
 
 	} else {
 		envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
-		currentData := common.RemoteDependency{
+		currentData := RemoteDependency{
 			Name : sd.Name,
 			Id : "|" + sd.SpanContext.TraceID.String() + "." + sd.SpanID.String() + ".",
 			ResultCode : "0", // TODO: Out of scope for now
@@ -93,15 +124,15 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 		} else {
 			currentData.Type = "INPROC" 
 		}
-		envelope.DataToSend = common.Data {
+		envelope.DataToSend = Data {
 			BaseData : currentData,
 			BaseType : "RemoteDependencyData",
 		}
 	}
-	transporter := common.Transporter{ 
+	transporter := Transporter{ 
 		EnvelopeData: envelope,
 	}
-	transporter.Transmit(&exporter.Options, &envelope)
+	transporter.Transmit(exporter, &envelope)
 
 	fmt.Printf("Name: %s\nTraceID: %x\nSpanID: %x\nParentSpanID: %x\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
 		sd.Name, sd.TraceID, sd.SpanID, sd.ParentSpanID, sd.StartTime, sd.EndTime, sd.Annotations)

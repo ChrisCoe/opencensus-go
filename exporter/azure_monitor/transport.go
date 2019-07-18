@@ -1,4 +1,4 @@
-package common
+package azure_monitor
 // Package: Structs commonly used for both trace and log exporters
 
 import (
@@ -18,13 +18,13 @@ type Transporter struct {
 	@param envelope Contains the data package to be transmitted
 	@return The exporter created, and error if there is any
 */
-func (e *Transporter) Transmit(options *Options, envelope *Envelope) {
+func (e *Transporter) Transmit(exporter *Exporter, envelope *Envelope) {
 	bytesRepresentation, err := json.Marshal(envelope)
 	if err != nil {
 		fmt.Println(err)
 	}
 	response, err := http.Post(
-		options.EndPoint, 						//url
+		exporter.EndPoint, 						//url
 		"application/json",		 				//header
 		bytes.NewBuffer(bytesRepresentation),	//data
 	)

@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"log"
 	
 	"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/trace"
@@ -11,8 +12,12 @@ import (
 func main() {
 	ctx := context.Background()
 
-	exporter := azure_monitor.NewAzureTraceExporter()
-	exporter.Options.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
+	exporter, err := azure_monitor.NewExporter(azure_monitor.Options{
+        InstrumentationKey: "111a0d2f-ab53-4b62-a54f-4722f09fd136", // "11111111-1111-1111-1111-111111111111"
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)

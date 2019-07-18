@@ -5,14 +5,17 @@ import (
 	"net/http"
 
 	"go.opencensus.io/exporter/azure_monitor"
-	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
 
 func main() {
-	exporter := azure_monitor.NewAzureTraceExporter()
-	exporter.InstrumentationKey = "11111111-1111-1111-1111-111111111111"
+	exporter, err := azure_monitor.NewExporter(azure_monitor.Options{
+        InstrumentationKey: "11111111-1111-1111-1111-111111111111", // "11111111-1111-1111-1111-111111111111"
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 	
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)

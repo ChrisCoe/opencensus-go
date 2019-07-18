@@ -1,8 +1,7 @@
-package common
+package azure_monitor
 // Package: Structs commonly used for both trace and log exporters
 
 import (
-	"context" 
 	"fmt"
 	"os"
 )
@@ -21,14 +20,6 @@ func getHostName() (string) {
 		fmt.Println("Problem with getting host name")
 	}
 	return hostName
-}
-
-type Options struct {
-	ServiceName         string
-	InstrumentationKey  string
-	Context             context.Context
-	EndPoint            string
-	TimeOut             int
 }
 
 type Data struct {

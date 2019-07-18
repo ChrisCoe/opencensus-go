@@ -73,11 +73,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 
 	} else {
 		envelope.Name = "Microsoft.ApplicationInsights.RemoteDependency"
-		// fmt.Println("This is sd.SpanContext.TraceID.String()")
-		// fmt.Println(sd.SpanContext.TraceID.String())
-		// fmt.Println("This is sd.TraceID")
-		// fmt.Println(sd.TraceID)
-		// fmt.Printf("This is sd.TraceID with %x\n", sd.TraceID)
 		currentData := common.RemoteDependency{
 			Name : sd.Name,
 			Id : fmt.Sprintf("|%s.%s.",sd.TraceID, sd.SpanID),

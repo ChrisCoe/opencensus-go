@@ -7,8 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"go.opencensus.io/exporter/azure_monitor"
-	//"go.opencensus.io/exporter/azure_monitor/common"
+	//"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
@@ -16,13 +15,26 @@ import (
 func main() {
 	ctx := context.Background() // In other usages, the context would have been passed down after starting some traces.
 	
-	exporter := azure_monitor.NewAzureTraceExporter()
-	exporter.Options.InstrumentationKey = "111a0d2f-ab53-4b62-a54f-4722f09fd136"
+	// exporter := azure_monitor.NewAzureTraceExporter()
+	// exporter.Options.InstrumentationKey = "111a0d2f-ab53-4b62-a54f-4722f09fd136"
 	
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-	trace.RegisterExporter(exporter)
+	// trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+	// trace.RegisterExporter(exporter)
 
-	req, _ := http.NewRequest("GET", "https://opencensus.io/", nil)
+	ctx, span := trace.StartSpan(ctx, "/parent") // This calls the function ExportSpan written in azure_monitor.go 
+	foo(ctx)
+	span.End()
+	log.Print("Program Terminated")
+}
+
+/* Function must take a context.Context as a parameter to create a child span
+for the trace, which is a tree of spans.
+*/
+func foo(ctx context.Context) {
+	ctx, span := trace.StartSpan(ctx, "/child") // should be a child span
+	defer span.End()
+
+	req, _ := http.NewRequest("GET", "https://en.wikipedia.org/wiki/Chicken", nil)
 
 	// It is imperative that req.WithContext is used to
 	// propagate context and use it in the request.

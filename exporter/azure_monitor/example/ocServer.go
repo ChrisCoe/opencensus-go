@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 	"net/http"
 
 	"go.opencensus.io/exporter/azure_monitor"
@@ -19,6 +20,8 @@ func main() {
 	
 	originalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, World!"))
+		// resp, _ := http.Get("https://opencensus.io/")
+		// defer resp.Body.Close()
 	})
 	och := &ochttp.Handler{
 		Handler: originalHandler, // The handler you'd have used originally
@@ -27,5 +30,7 @@ func main() {
 	// Now use the instrumented handler
 	if err := http.ListenAndServe(":8080", och); err != nil {
 		log.Fatalf("Failed to run the server: %v", err)
+	} else {
+		fmt.Println("Server is running on 8080")
 	}
 }

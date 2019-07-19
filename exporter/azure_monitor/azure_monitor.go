@@ -17,7 +17,6 @@ import (
 type Exporter struct {
 	ServiceName         string
 	InstrumentationKey  string
-	Context             context.Context
 	EndPoint            string
 	TimeOut             int
 }
@@ -26,7 +25,6 @@ type Exporter struct {
 type Options struct {
 	ServiceName         string
 	InstrumentationKey  string	// required by user
-	Context             context.Context
 	EndPoint            string
 	TimeOut             int
 }

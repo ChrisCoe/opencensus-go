@@ -7,21 +7,23 @@ import (
 	"log"
 	"net/http"
 
-	//"go.opencensus.io/exporter/azure_monitor"
+	"go.opencensus.io/exporter/azure_monitor"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
 
 func main() {
-	ctx := context.Background() // In other usages, the context would have been passed down after starting some traces.
+	/* In other usages, the context would have been passed down after starting some traces. */
+	ctx := context.Background() 
 	
-	// exporter := azure_monitor.NewAzureTraceExporter()
-	// exporter.Options.InstrumentationKey = "111a0d2f-ab53-4b62-a54f-4722f09fd136"
+	exporter := azure_monitor.NewAzureTraceExporter()
+	exporter.Options.InstrumentationKey = "111a0d2f-ab53-4b62-a54f-4722f09fd136"
 	
-	// trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
-	// trace.RegisterExporter(exporter)
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})  // why not always sample? I would miss some errors...
+	trace.RegisterExporter(exporter)
 
-	ctx, span := trace.StartSpan(ctx, "/parent") // This calls the function ExportSpan written in azure_monitor.go 
+	/* This calls the function ExportSpan written in azure_monitor.go  */
+	ctx, span := trace.StartSpan(ctx, "/parentGood2") 
 	foo(ctx)
 	span.End()
 	log.Print("Program Terminated")
@@ -31,7 +33,7 @@ func main() {
 for the trace, which is a tree of spans.
 */
 func foo(ctx context.Context) {
-	ctx, span := trace.StartSpan(ctx, "/child") // should be a child span
+	ctx, span := trace.StartSpan(ctx, "/childGood2") // should be a child span
 	defer span.End()
 
 	req, _ := http.NewRequest("GET", "https://en.wikipedia.org/wiki/Chicken", nil)

@@ -50,3 +50,12 @@ func FormatTime(t time.Time) string {
 	formattedTime := t.Format(TimeFormat)
 	return formattedTime
 }
+
+/* Get netloc of url given a string */
+func UrlToDependencyName(inputUrl string) (string, error) {
+	urlParsed, err := url.ParseRequestURI(inputUrl)
+	if err != nil {
+		return "", errors.New("can't parse url attribute in span")
+	}
+	return urlParsed.Host, nil
+}

@@ -85,17 +85,7 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 			currentData.Type = "HTTP"
 			if _, isIncluded := sd.Attributes["http.url"]; isIncluded {
 				Url := fmt.Sprintf("%s", sd.Attributes["http.url"])
-				//currentData.Name = Url // TODO: parse URL before assignment
-				if Url != "" {
-					name, err := utils.UrlToDependencyName(Url)
-					if err != nil {
-						log.Println(err) // We don't want to stop the span
-					}
-					currentData.Name = name
-				} else {
-					log.Println(errors.New("empty string url in span"))
-					currentData.Name = ""
-				}
+				currentData.Name = Url // TODO: parse URL before assignment
 			}
 			if _, isIncluded := sd.Attributes["http.status_code"]; isIncluded {
 				currentData.ResultCode = fmt.Sprintf("%d", sd.Attributes["http.status_code"])

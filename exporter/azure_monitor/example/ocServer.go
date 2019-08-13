@@ -5,15 +5,12 @@ import (
 	"net/http"
 
 	"go.opencensus.io/exporter/azure_monitor"
-	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
 
 func main() {
-	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-	})
+	exporter, err := azure_monitor.NewAzureTraceExporter("11111111-1111-1111-1111-111111111111")
 	if err != nil {
 		log.Fatal(err)
 	}

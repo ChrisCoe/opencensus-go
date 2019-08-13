@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"go.opencensus.io/exporter/azure_monitor"
-	"go.opencensus.io/exporter/azure_monitor/common"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
 )
@@ -16,16 +15,14 @@ import (
 func main() {
 	ctx := context.Background() // In other usages, the context would have been passed down after starting some traces.
 	
-	exporter, err := azure_monitor.NewAzureTraceExporter(common.Options{
-		InstrumentationKey: "11111111-1111-1111-1111-111111111111", // add your InstrumentationKey
-	})
+	exporter, err := azure_monitor.NewAzureTraceExporter("11111111-1111-1111-1111-111111111111")
 	if err != nil {
 		log.Fatal(err)
 	}
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	trace.RegisterExporter(exporter)
 
-	req, _ := http.NewRequest("GET", "https://opencensus.io/", nil)
+	req, _ := http.NewRequest("GET", "http://localhost:8080/", nil)
 
 	// It is imperative that req.WithContext is used to
 	// propagate context and use it in the request.

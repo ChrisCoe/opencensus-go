@@ -108,6 +108,6 @@ func (exporter *AzureTraceExporter) ExportSpan(sd *trace.SpanData) {
 	}
 	transporter.Transmit(&exporter.Options, &envelope)
 
-	fmt.Printf("Name: %s\nTraceID: %x\nSpanID: %x\nParentSpanID: %x\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
+	fmt.Printf("Name: %s\nTraceID: %s\nSpanID: %s\nParentSpanID: %s\nStartTime: %s\nEndTime: %s\nAnnotations: %+v\n\n",
 		sd.Name, sd.TraceID, sd.SpanID, sd.ParentSpanID, sd.StartTime, sd.EndTime, sd.Annotations)
 }

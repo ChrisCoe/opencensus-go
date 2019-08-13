@@ -45,6 +45,7 @@ func divMod(numerator, denominator int64) (quotient, remainder int64) {
 	@return time stamp
 */
 func FormatTime(t time.Time) string {
+	t = t.UTC()
 	formattedTime := t.Format(TimeFormat)
 	return formattedTime
 }
